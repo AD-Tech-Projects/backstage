@@ -2,6 +2,38 @@
 
 This package is an EXAMPLE of a Backstage backend.
 
+## Structure
+
+```
+packages/backend/
+├── src/
+│   └── index.ts   Backend entry point — the only source file
+└── Dockerfile      Production container image (used by `yarn build-image`)
+```
+
+## What's registered in `src/index.ts`
+
+Built with the **new backend system** (`@backstage/backend-defaults`). Every
+capability is a plugin package added with `backend.add(import(...))`:
+
+| Area                  | Plugins                                                                  |
+| --------------------- | ------------------------------------------------------------------------ |
+| Core                  | `app-backend` (serves the built frontend), `proxy-backend`               |
+| Scaffolder            | `scaffolder-backend` + GitHub and notifications modules                  |
+| TechDocs              | `techdocs-backend`                                                       |
+| Auth                  | `auth-backend` + `guest-provider` module (dev-only, no real login)       |
+| Catalog               | `catalog-backend` + scaffolder-entity-model and logs modules             |
+| Permissions           | `permission-backend` + `allow-all-policy` module (no access control yet) |
+| Search                | `search-backend` + Postgres engine + catalog/techdocs collator modules   |
+| Kubernetes            | `kubernetes-backend`                                                     |
+| User settings         | `user-settings-backend`                                                  |
+| Notifications/Signals | `notifications-backend`, `signals-backend`                               |
+| MCP                   | `mcp-actions-backend`                                                    |
+
+To add a capability, add another `backend.add(import('@backstage/plugin-...'))`
+line. To replace the guest-only auth or the allow-all permission policy before
+shipping to real users, see the linked docs in the file's comments.
+
 The main purpose of this package is to provide a test bed for Backstage plugins
 that have a backend part. Feel free to experiment locally or within your fork by
 adding dependencies and routes to this backend, to try things out.

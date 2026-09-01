@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: backstage-ad-tech
+  description: Ad - Tech Solutions developer portal, built on Backstage
+  annotations:
+    github.com/project-slug: AlvaroDavi5/backstage-ad_tech
+spec:
+  type: website
+  owner: devs
+  lifecycle: experimental

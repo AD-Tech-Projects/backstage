@@ -1,7 +1,7 @@
 {
 	"$schema": "https://json.schemastore.org/package.json",
 	"name": "backstage_adtech",
-	"version": "2.0.0",
+	"version": "3.0.0",
 	"description": "Backstage for AdTech Projects",
 	"license": "UNLICENSED",
 	"private": true,
@@ -12,7 +12,7 @@
 	"repository": "https://github.com/AlvaroDavi5/backstage-ad_tech.git",
 	"engineStrict": true,
 	"engines": {
-		"node": "20 || 22"
+		"node": "22 || 24"
 	},
 	"os": [
 		"linux",
@@ -27,9 +27,9 @@
 	],
 	"scripts": {
 		"start": "backstage-cli repo start",
-		"build:backend": "yarn workspace backend build",
+		"build:backend": "yarn workspace ad-tech-backend build",
 		"build:all": "backstage-cli repo build --all",
-		"build-image": "yarn workspace backend build-image",
+		"build-image": "yarn workspace ad-tech-backend build-image",
 		"tsc": "tsc",
 		"tsc:full": "tsc --skipLibCheck false --incremental false",
 		"clean": "backstage-cli repo clean",
@@ -42,16 +42,28 @@
 		"prettier:check": "prettier --check .",
 		"new": "backstage-cli new"
 	},
-	"workspaces": {
-		"packages": [
-			"packages/*",
-			"plugins/*"
-		]
+	"backstage": {
+		"cli": {
+			"new": {
+				"globals": {
+					"license": "UNLICENSED"
+				}
+			}
+		}
 	},
+	"workspaces": [
+		"packages/*",
+		"plugins/*"
+	],
 	"devDependencies": {
-		"@backstage/cli": "^0.32.0",
-		"@backstage/e2e-test-utils": "^0.1.1",
+		"@backstage/cli": "^0.36.4",
+		"@backstage/cli-defaults": "^0.1.4",
+		"@backstage/e2e-test-utils": "^0.1.2",
+		"@jest/environment-jsdom-abstract": "~30.2.0",
 		"@playwright/test": "^1.32.3",
+		"@types/jest": "^30.0.0",
+		"jest": "~30.2.0",
+		"jsdom": "^27.1.0",
 		"node-gyp": "^10.0.0",
 		"prettier": "^2.3.2",
 		"typescript": "~5.8.0"
@@ -70,5 +82,5 @@
 			"prettier --write"
 		]
 	},
-	"packageManager": "yarn@4.4.1"
+	"packageManager": "yarn@4.13.0"
 }

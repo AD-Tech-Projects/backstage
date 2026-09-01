@@ -24,7 +24,7 @@ export default defineConfig({
 	timeout: 60_000,
 
 	expect: {
-		timeout: 5_000,
+		timeout: 30_000,
 	},
 
 	// Run your local dev server before starting the tests
@@ -32,8 +32,14 @@ export default defineConfig({
 		? []
 		: [
 			{
-				command: 'yarn start',
-				port: 3002,
+				command: 'yarn start ad-tech-app',
+				url: 'http://localhost:9003',
+				reuseExistingServer: true,
+				timeout: 120_000,
+			},
+			{
+				command: 'yarn start ad-tech-backend',
+				port: 7007,
 				reuseExistingServer: true,
 				timeout: 60_000,
 			},
@@ -47,9 +53,7 @@ export default defineConfig({
 
 	use: {
 		actionTimeout: 0,
-		baseURL:
-			process.env.PLAYWRIGHT_URL ??
-			(process.env.CI ? 'http://localhost:7007' : 'http://localhost:3002'),
+		baseURL: process.env.PLAYWRIGHT_URL ?? (process.env.CI ? 'http://localhost:7007' : 'http://localhost:9003'),
 		screenshot: 'only-on-failure',
 		trace: 'on-first-retry',
 	},

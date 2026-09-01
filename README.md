@@ -1,42 +1,108 @@
-# [Backstage](https://backstage.io)
+# Backstage AdTech
 
-[![headline](docs/assets/headline.png)](https://backstage.io/)
+A [Backstage](https://backstage.io) instance (v1.53.0) — an internal developer
+portal for cataloging software, browsing docs, and scaffolding new projects.
 
-Project based on [Backstage, by Spotify](https://github.com/backstage/backstage) opensource project.  
-Used for public projects by [AD Tech Solutions](https://www.linkedin.com/company/ad-techsolutions/).
+This app was generated with `@backstage/create-app` and uses the **new frontend
+system** (`@backstage/frontend-defaults`) on the client and the **new backend
+system** (`@backstage/backend-defaults`) on the server.
 
-## How to run this project
+## Project layout
 
-To start the app, run:
+| Path                                              | What it is                                                             |
+| ------------------------------------------------- | ---------------------------------------------------------------------- |
+| [`packages/app/`](packages/app/README.md)         | The frontend React app (served on `:9003`)                             |
+| [`packages/backend/`](packages/backend/README.md) | The backend service (served on `:7007`)                                |
+| [`plugins/`](plugins/README.md)                   | Home for any custom, in-repo Backstage plugins                         |
+| [`examples/`](examples/README.md)                 | Sample catalog entities and a scaffolder template used for local dev   |
+| [`entities/`](entities/README.md)                 | AD Tech's own catalog entities (org data + external project locations) |
+| `app-config.yaml`                                 | Main app configuration (dev) — see [Configuration](#configuration)     |
+| `app-config.production.yaml`                      | Overrides merged in only when `NODE_ENV=production`                    |
+| `catalog-info.yaml`                               | Registers this repo itself as a `Component` in the catalog             |
+| `backstage.json`                                  | Records the Backstage release version this app was created from        |
+
+## Prerequisites
+
+- **Node.js 20 or 22** (Active LTS). This project pins `22.16.0` via
+  [asdf](https://asdf-vm.com) in `.tool-versions`. Node 24+ is not officially
+  supported by Backstage yet, even though it runs.
+- **Yarn 4** (Corepack/Yarn Berry) — already vendored in `.yarn/releases`, no
+  global install needed.
+
+## Running the project
+
 ```sh
-yarn install # for node 20 and 22
+# 1. Install dependencies (uses Yarn workspaces: packages/* + plugins/*)
+yarn install
+
+# 2. Start the app — runs the backend (:7007) and frontend (:9003) together,
+#    with hot reload for both.
 yarn start
 ```
 
-## What is Backstage?
+Then open **http://localhost:9003**. Sign in with the pre-configured **guest**
+auth provider (no credentials needed in dev).
 
-[Backstage](https://backstage.io/) is an open source framework for building developer portals. Powered by a centralized software catalog, Backstage restores order to your microservices and infrastructure and enables your product teams to ship high-quality code quickly without compromising autonomy.
+Other useful scripts (see root [`package.json`](package.json)):
 
-Backstage unifies all your infrastructure tooling, services, and documentation to create a streamlined development environment from end to end.
+```sh
+yarn build:all         # Production build of every workspace package
+yarn build:backend     # Production build of just the backend
+yarn build-image       # Build the backend's Docker image
+yarn test              # Run unit tests (Jest) for changed packages
+yarn test:all          # Run unit tests with coverage, all packages
+yarn test:e2e          # Run Playwright end-to-end tests
+yarn lint              # Lint files changed since origin/main
+yarn lint:all          # Lint the whole repo
+yarn fix               # Auto-fix lint issues
+yarn tsc               # Type-check the whole repo
+yarn new               # Scaffold a new plugin/module into plugins/
+```
 
-![software-catalog](docs/assets/header.png)
+## Configuration
 
-Out of the box, Backstage includes:
+Backstage reads `app-config.yaml` (and merges `app-config.production.yaml` in
+prod). Key defaults in this repo:
 
-- [Backstage Software Catalog](https://backstage.io/docs/features/software-catalog/) for managing all your software such as microservices, clusters, libraries, data pipelines, websites, and ML models;
+- **Database**: SQLite in-memory (`better-sqlite3`) for local dev — no setup
+  required. Swap to Postgres for production (see comments in
+  `app-config.production.yaml`).
+- **Auth**: `guest` provider only — anyone can sign in without credentials.
+  Fine for local dev; replace before deploying (see
+  https://backstage.io/docs/auth/).
+- **Catalog**: auto-discovers entities declared under `packages: all` plus
+  whatever's registered via `catalog-info.yaml` / the `examples/` and
+  `entities/` locations.
+- **Organization**: `organization.name` is set to `AD Tech`.
+- **Ports**: frontend on `9003`, backend on `7007` (`app.baseUrl` /
+  `backend.cors.origin` match).
+- **GitHub integration**: reads a Personal Access Token from the `GITHUB_TOKEN`
+  environment variable (`integrations.github`) — required for the scaffolder's
+  GitHub actions and for anything under `catalog.locations` that references a
+  private repo.
 
-![catalog-relations](docs/assets/features/catalog-graph.png)
+Do not commit real secrets into `app-config.yaml` — use `${ENV_VAR}`
+substitution (Backstage resolves these from the process environment at
+startup).
 
-![service](docs/assets/features/service.png)
+## Code style
 
-![api](docs/assets/features/api.png)
+Formatting is enforced by Prettier via `.prettierrc` (tabs, single quotes,
+`printWidth: 160`) and mirrored in `.editorconfig` for editors that don't run
+Prettier directly. This overrides the `@backstage/cli` default (spaces) — run
+`yarn prettier:check` / `yarn fix` to apply it.
 
-- [Backstage Software Templates](https://backstage.io/docs/features/software-templates/) for quickly spinning up new projects and standardizing your tooling with your organization’s best practices;
+## Adding functionality
 
-- [Backstage TechDocs](https://backstage.io/docs/features/techdocs/) for making it easy to create, maintain, find, and use technical documentation, using a "docs like code" approach;
+- **New custom plugin**: `yarn new` and follow the prompt, or hand-create a
+  package under `plugins/` (see [`plugins/README.md`](plugins/README.md)).
+- **New frontend page/nav item**: edit `packages/app/src/App.tsx` and
+  `packages/app/src/modules/nav/`.
+- **New backend plugin**: add a `backend.add(import('@backstage/plugin-...'))`
+  line in `packages/backend/src/index.ts`.
 
-![techdocs](docs/assets/features/techdocs.png)
+## Learn more
 
-- Plus, a growing ecosystem of [open source plugins](https://github.com/backstage/backstage/tree/master/plugins) that further expand Backstage’s customizability and functionality.
-
-Backstage was created by Spotify but is now hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io) as an Incubation level project. For more information, see the [announcement](https://backstage.io/blog/2022/03/16/backstage-turns-two#out-of-the-sandbox-and-into-incubation).
+- Backstage docs: https://backstage.io/docs/
+- Software catalog: https://backstage.io/docs/features/software-catalog/configuration
+- Authentication providers: https://backstage.io/docs/auth/

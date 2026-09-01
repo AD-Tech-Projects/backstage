@@ -1,7 +1,8 @@
-# Backstage AdTech
+# Backstage AD Tech Solutions
 
 A [Backstage](https://backstage.io) instance (v1.53.0) — an internal developer
-portal for cataloging software, browsing docs, and scaffolding new projects.
+portal for AD Tech Solutions. Catalogs software components and APIs, hosts TechDocs,
+and provides scaffolding templates for new projects.
 
 This app was generated with `@backstage/create-app` and uses the **new frontend
 system** (`@backstage/frontend-defaults`) on the client and the **new backend
@@ -15,7 +16,7 @@ system** (`@backstage/backend-defaults`) on the server.
 | [`packages/backend/`](packages/backend/README.md) | The backend service (served on `:7007`)                                |
 | [`plugins/`](plugins/README.md)                   | Home for any custom, in-repo Backstage plugins                         |
 | [`examples/`](examples/README.md)                 | Sample catalog entities and a scaffolder template used for local dev   |
-| [`entities/`](entities/README.md)                 | AD Tech's own catalog entities (org data + external project locations) |
+| [`entities/`](entities/README.md)                 | AD Tech Solutions' own catalog entities: org structure + Node.js Backend Boilerplate integration |
 | `app-config.yaml`                                 | Main app configuration (dev) — see [Configuration](#configuration)     |
 | `app-config.production.yaml`                      | Overrides merged in only when `NODE_ENV=production`                    |
 | `catalog-info.yaml`                               | Registers this repo itself as a `Component` in the catalog             |
@@ -73,7 +74,7 @@ prod). Key defaults in this repo:
 - **Catalog**: auto-discovers entities declared under `packages: all` plus
   whatever's registered via `catalog-info.yaml` / the `examples/` and
   `entities/` locations.
-- **Organization**: `organization.name` is set to `AD Tech`.
+- **Organization**: `organization.name` is set to `AD Tech Solutions`.
 - **Ports**: frontend on `9003`, backend on `7007` (`app.baseUrl` /
   `backend.cors.origin` match).
 - **GitHub integration**: reads a Personal Access Token from the `GITHUB_TOKEN`
@@ -96,10 +97,13 @@ Prettier directly. This overrides the `@backstage/cli` default (spaces) — run
 
 - **New custom plugin**: `yarn new` and follow the prompt, or hand-create a
   package under `plugins/` (see [`plugins/README.md`](plugins/README.md)).
-- **New frontend page/nav item**: edit `packages/app/src/App.tsx` and
-  `packages/app/src/modules/nav/`.
+- **New frontend feature/plugin**: add it to the `features` array in
+  `packages/app/src/App.tsx`; customize navigation using the `NavContentBlueprint`
+  pattern in `packages/app/src/modules/nav/Sidebar.tsx`.
 - **New backend plugin**: add a `backend.add(import('@backstage/plugin-...'))`
   line in `packages/backend/src/index.ts`.
+- **New catalog entity**: add a `.yaml` file under `entities/` and register it
+  in `app-config.yaml` under `catalog.locations` (see [`entities/README.md`](entities/README.md)).
 
 ## Learn more
 

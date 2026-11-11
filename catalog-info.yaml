@@ -4,7 +4,7 @@ metadata:
   name: backstage-ad-tech
   description: Ad - Tech Solutions developer portal, built on Backstage
   annotations:
-    github.com/project-slug: AlvaroDavi5/backstage-ad_tech
+    github.com/project-slug: AD-Tech-Projects/backstage
 spec:
   type: website
   owner: devs
